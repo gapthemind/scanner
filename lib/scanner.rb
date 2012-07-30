@@ -1,5 +1,5 @@
 require "scanner/version"
+require "scanner/scanner"
 
 module Scanner
-  # Your code goes here...
 end
