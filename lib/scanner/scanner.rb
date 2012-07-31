@@ -1,19 +1,22 @@
 module Scanner
 
-  def token(token_symbol, regular_expression)
+  private
+  @language_tokens = {}
+  @ignore = nil
+
+  public
+
+  def self.token(token_symbol, regular_expression)
     @language_tokens[token_symbol] = regular_expression
   end
 
-  def ignore(regular_expression)
+  def self.ignore(regular_expression)
     @ignore = regular_expression
   end
 
   def parse(program)
     @program = program
     @token_list = []
-    @language_tokens = {}
-    @ignore = nil
-    token :eof, /\A\z/
   end
 
   def consume
@@ -37,10 +40,20 @@ module Scanner
 
   private
 
+  token :eof, /\A\z/
+
+  def self.language_tokens
+    @language_tokens
+  end
+
+  def self.ignore
+    @ignore
+  end
+
   def consume_next_token
     clear_ignore_text
 
-    @language_tokens.each do |symbol, reg_exp|
+    self.class.language_tokens.each do |symbol, reg_exp|
       if @program =~ reg_exp
         return Token.new(symbol, consume_regular_expression(reg_exp), 0, 0)
       end
@@ -56,7 +69,7 @@ module Scanner
   end
 
   def clear_ignore_text
-    consume_regular_expression(@ignore) if @ignore
+    consume_regular_expression(self.class.ignore) if self.class.ignore
   end
 
 
