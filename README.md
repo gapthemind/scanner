@@ -24,6 +24,20 @@ Scanner is a module that you can include in your classes. It defines a
 token function that accepts the regular expression that the token
 matches.
 
+Example code
+
+    class TestScanner
+      include Scanner
+      ignore /\s+/
+      token :number, /\d+/
+      token :id, /\w+/
+    end
+
+    @scanner = TestScanner.new
+    @scanner.parse("123")
+    @scanner.look_ahead.is?(:number) # Should be true
+
+
 ## Contributing
 
 1. Fork it
