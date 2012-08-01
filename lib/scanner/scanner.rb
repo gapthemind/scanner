@@ -34,6 +34,8 @@ module Scanner
   def parse(program)
     @program = program
     @token_list = []
+    @line_number = 1
+    @column_number = 1
   end
 
   def consume
@@ -61,9 +63,10 @@ module Scanner
   def consume_next_token
     clear_ignore_text
 
+    currently_at_column = @column_number
     language_tokens.each do |symbol, reg_exp|
       if @program =~ reg_exp
-        return Token.new(symbol, consume_regular_expression(reg_exp), 0, 0)
+        return Token.new(symbol, consume_regular_expression(reg_exp), @line_number, currently_at_column)
       end
     end
 
@@ -73,6 +76,7 @@ module Scanner
   def consume_regular_expression(regexp)
     content = @program[regexp]
     @program.gsub!(regexp,"")
+    calculate_position_after content
     content
   end
 
@@ -80,5 +84,15 @@ module Scanner
     consume_regular_expression(ignore) if ignore
   end
 
-
+  def calculate_position_after(content)
+    if content
+      number_of_new_lines = content.scan(/\n/).size
+      if number_of_new_lines > 0
+        @line_number += number_of_new_lines
+        @column_number = content.gsub(/.*\n/,"").length + 1
+      else
+        @column_number += content.length
+      end
+    end
+  end
 end
