@@ -4,9 +4,9 @@ describe Scanner do
   before(:each) do
     class TestScanner
       include Scanner
-      ignore /\A[\s|\n]+/
-      token :number, /\d+/
-      token :id, /\w+/
+      ignore '[\s|\n]+'
+      token :number, '\d+'
+      token :id, '\w+'
     end
 
     @scanner = TestScanner.new

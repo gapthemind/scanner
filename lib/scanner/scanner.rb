@@ -8,14 +8,16 @@ module Scanner
       @ignore = nil
 
       def token(token_symbol, regular_expression)
-        @language_tokens[token_symbol] = regular_expression
+        modified_reg_exp = "\\A#{regular_expression}"
+        @language_tokens[token_symbol] = /#{modified_reg_exp}/
       end
 
       def ignore(regular_expression)
-        @ignore = regular_expression
+        modified_reg_exp = "\\A#{regular_expression}"
+        @ignore = /#{modified_reg_exp}/
       end
 
-      token :eof, /\A\z/
+      token :eof, '\z'
     end
 
   end
