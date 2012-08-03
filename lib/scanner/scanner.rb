@@ -7,10 +7,13 @@ module Scanner
       @language_tokens = {}
       @ignore = nil
       @keywords = nil
+      @check_for_token_separator = {}
+      @separator = nil
 
-      def token(token_symbol, regular_expression)
+      def token(token_symbol, regular_expression, options = {})
         modified_reg_exp = "\\A#{regular_expression}"
         @language_tokens[token_symbol] = /#{modified_reg_exp}/
+        @check_for_token_separator[token_symbol] = options[:check_for_token_separator] == true
       end
 
       def ignore(regular_expression)
@@ -20,6 +23,11 @@ module Scanner
 
       def keywords(keywords)
         @keywords = keywords
+      end
+
+      def token_separator(regular_expression)
+        modified_reg_exp = "\\A#{regular_expression}"
+        @separator = /#{modified_reg_exp}/
       end
 
       token :eof, '\z'
@@ -39,6 +47,14 @@ module Scanner
   def keywords
     self.class.instance_eval { @keywords }
   end
+
+  def check_for_token_separator
+    self.class.instance_eval { @check_for_token_separator }
+  end  
+
+  def separator
+    self.class.instance_eval { @separator }
+  end  
 
   public
 
@@ -68,6 +84,23 @@ module Scanner
     @token_list[-1]
   end
 
+  def token_is?(token_type)
+    look_ahead.is? token_type
+  end
+
+  def token_is_not?(token_type)
+    not (look_ahead.is? token_type)
+  end
+
+  def tokens_are?(*tokens)
+    look_ahead_index = 1
+    tokens.each do |token|
+      return false unless look_ahead(look_ahead_index).is? token
+      look_ahead_index += 1
+    end
+    return true
+  end
+
   private
 
 
@@ -77,7 +110,10 @@ module Scanner
     currently_at_column = @column_number
     language_tokens.each do |symbol, reg_exp|
       if @program =~ reg_exp
-        content, token_type = get_token_from_regexp(regexp)
+        content, token_type = get_token_from_reg_exp(reg_exp, symbol)
+        if check_for_token_separator[symbol]
+          check_for_separator
+        end
         return Token.new(token_type, content, @line_number, currently_at_column)
       end
     end
@@ -85,7 +121,12 @@ module Scanner
     throw :scanner_exception
   end
 
-  def get_token_from_regexp(regexp)
+  def check_for_separator
+    eof = language_tokens[:eof]
+    throw :scanner_exception unless @program =~ separator || @program =~ eof
+  end
+
+  def get_token_from_reg_exp(reg_exp, symbol)
     content = consume_regular_expression(reg_exp)
     if keywords.include? content
       token_type = content.to_sym
