@@ -6,6 +6,7 @@ module Scanner
     aModule.instance_eval do
       @language_tokens = {}
       @ignore = nil
+      @keywords = nil
 
       def token(token_symbol, regular_expression)
         modified_reg_exp = "\\A#{regular_expression}"
@@ -15,6 +16,10 @@ module Scanner
       def ignore(regular_expression)
         modified_reg_exp = "\\A#{regular_expression}"
         @ignore = /#{modified_reg_exp}/
+      end
+
+      def keywords(keywords)
+        @keywords = keywords
       end
 
       token :eof, '\z'
@@ -29,6 +34,10 @@ module Scanner
 
   def ignore
     self.class.instance_eval { @ignore }
+  end
+
+  def keywords
+    self.class.instance_eval { @keywords }
   end
 
   public
@@ -68,11 +77,22 @@ module Scanner
     currently_at_column = @column_number
     language_tokens.each do |symbol, reg_exp|
       if @program =~ reg_exp
-        return Token.new(symbol, consume_regular_expression(reg_exp), @line_number, currently_at_column)
+        content, token_type = get_token_from_regexp(regexp)
+        return Token.new(token_type, content, @line_number, currently_at_column)
       end
     end
 
     throw :scanner_exception
+  end
+
+  def get_token_from_regexp(regexp)
+    content = consume_regular_expression(reg_exp)
+    if keywords.include? content
+      token_type = content.to_sym
+    else
+      token_type = symbol
+    end
+    return content, token_type
   end
 
   def consume_regular_expression(regexp)

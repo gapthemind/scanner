@@ -7,6 +7,7 @@ describe Scanner do
       ignore '[\s|\n]+'
       token :number, '\d+'
       token :id, '\w+'
+      keywords %w{if then else}
     end
 
     @scanner = TestScanner.new
