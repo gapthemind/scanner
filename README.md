@@ -42,7 +42,9 @@ Each token is defined by a symbol, used to identify the token, and a
 regular expression that the token should match. An optional third
 parameter accepts a hash of options that we will explore later. For
 example
+
     token :number, '\d+'
+
 will match strings containing digits.
 
 Some care is needed when defining tokens that collide with other
@@ -56,6 +58,7 @@ For many scanning needs, there is a set of characters that is safely
 ignored, for instace, in many programming languages, spaces and
 newlines. You can define the set of characters to ignore with the
 following definition:
+
     ignore '[\s|\n]+'
 
 ### Defining keywords
@@ -65,6 +68,7 @@ tokens 'def', 'class', 'module', and so on, are language reserved words.
 Usually, these tokens are a subset of a larger token group, called
 identifiers or ids. You can define a family of reserved words by using
 the 'keywords' function. 
+
     ignore '[\s|\n]+'
     token :id, '[a-z]+'
     keywords %w{def class module}
@@ -99,11 +103,13 @@ of tokens to look ahead.
 ### Looking ahead for token types
 When scanning strings, it is often necessary to lookahead to check what
 types of tokens are coming. For instance:
+
     if @scanner.lookahead.is?(:id) && @scanner.lookahead(2).is(:equal)
       # variable assignment
 
 Scanner provides a few utility functions to make this type of check
 easier. For instance, the previous check could be refactored to:
+
     if @scanner.tokens_are?(:id, :equal)
 
 The other two methods available are token_is? and token_is_not?.
