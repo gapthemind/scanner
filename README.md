@@ -108,11 +108,21 @@ types of tokens are coming. For instance:
       # variable assignment
 
 Scanner provides a few utility functions to make this type of check
-easier. For instance, the previous check could be refactored to:
+easier. For instance, the previous code could be refactored to:
 
     if @scanner.tokens_are?(:id, :equal)
 
 The other two methods available are token_is? and token_is_not?.
+
+### Tokens
+The tokens returned by consume and lookahead have a few  methods, which
+should be self explanatory: 
+
+* content
+* line
+* column
+* is? => Checks that the token is of a given type
+* is_not? => The opposite
 
 ## Contributing
 
