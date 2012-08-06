@@ -100,6 +100,13 @@ of tokens to look ahead.
     @scanner.lookahead.content == "one"
     @scanner.lookahead(2).content == "two"
 
+## Token separation
+TBD
+
+      token :number, '\d+', check_for_token_separator: true
+      token :id, '[a-z]+', check_for_token_separator: true
+      token_separator '\s'
+
 ### Looking ahead for token types
 When scanning strings, it is often necessary to lookahead to check what
 types of tokens are coming. For instance:
