@@ -100,7 +100,23 @@ of tokens to look ahead.
     @scanner.lookahead.content == "one"
     @scanner.lookahead(2).content == "two"
 
-## Token separation
+### End of file
+
+    ignore '\s+'
+    token :number, '\d+'
+    token :id, '[a-z]+'
+
+    @scanner = TestScanner.new
+    @scanner.parse("123 abc 456 other")
+    begin
+      token = @scanner.consume
+      puts token.content
+    end while token.is_not? :eof
+
+You need you have reached the end of the parse string when you receive
+the :eof token. For instance
+
+### Token separation
 Sometimes it is necessary to indicate that a given token needs to be
 followed by a token separator. For instance, in this example
 

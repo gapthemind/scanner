@@ -128,7 +128,7 @@ module Scanner
 
   def get_token_from_reg_exp(reg_exp, symbol)
     content = consume_regular_expression(reg_exp)
-    if keywords.include? content
+    if keywords && keywords.include?(content)
       token_type = content.to_sym
     else
       token_type = symbol
