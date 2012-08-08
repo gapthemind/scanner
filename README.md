@@ -101,7 +101,18 @@ of tokens to look ahead.
     @scanner.lookahead(2).content == "two"
 
 ## Token separation
-TBD
+Sometimes it is necessary to indicate that a given token needs to be
+followed by a token separator. For instance, in this example
+
+      token :number, '\d+'
+      token :id, '[a-z]+'
+
+The string "abc123" will be parsed as an :id followed by a :number,
+which may be undesirable. You may want to indicate that a token
+separator (commonly spaces, arithmetic operators, puntuation marks, 
+etc) needs to occur after :id or :number.
+
+The following code requires a space after ids and numbers:
 
       token :number, '\d+', check_for_token_separator: true
       token :id, '[a-z]+', check_for_token_separator: true
