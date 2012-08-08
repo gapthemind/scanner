@@ -35,6 +35,21 @@ describe Scanner do
     end
   end
 
+  describe "has enumerable functions" do
+    it "has each" do
+      @scanner.parse("123 456")
+      @scanner.each do |tok| 
+        tok.content.should match /123|456/
+      end 
+    end
+
+    it "has map" do
+      @scanner.parse("123 456")
+      map_results = @scanner.map { |tok| "-#{tok.content}-" }
+      map_results.should eq ["-123-","-456-"]
+    end
+  end
+
   describe "lookahead" do
     it "returns the next token without arguments" do
       @scanner.parse("123")

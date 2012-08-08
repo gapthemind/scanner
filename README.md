@@ -116,6 +116,13 @@ of tokens to look ahead.
 You need you have reached the end of the parse string when you receive
 the :eof token. For instance
 
+### Looping through tokens
+A scanner instance is a ruby Enumerable, so you can use each, map, and
+others.
+
+      @scanner.parse("123 456")
+      @scanner.map { |tok| "-#{tok.content}-" }
+
 ### Token separation
 Sometimes it is necessary to indicate that a given token needs to be
 followed by a token separator. For instance, in this example

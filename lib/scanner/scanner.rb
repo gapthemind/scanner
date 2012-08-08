@@ -50,13 +50,15 @@ module Scanner
 
   def check_for_token_separator
     self.class.instance_eval { @check_for_token_separator }
-  end  
+  end
 
   def separator
     self.class.instance_eval { @separator }
-  end  
+  end
 
   public
+
+  include Enumerable
 
   def parse(program)
     @program = program
@@ -99,6 +101,14 @@ module Scanner
       look_ahead_index += 1
     end
     return true
+  end
+
+  def each
+    token = consume
+    while token.is_not? :eof
+      yield token
+      token = consume
+    end
   end
 
   private
