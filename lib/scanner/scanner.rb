@@ -65,25 +65,23 @@ module Scanner
     @token_list = []
     @line_number = 1
     @column_number = 1
+    @token_number = 0
   end
 
   def consume
-    if @token_list.empty?
+    if @token_number >= @token_list.size
       consume_next_token
-    else
-      @token_list.shift
     end
+    token = @token_list[@token_number]
+    @token_number+=1
+    token
   end
 
   def look_ahead(number_of_tokens = 1)
-    end_of_file_met = false
-    while @token_list.size < number_of_tokens
-      throw :scanner_exception if end_of_file_met
-      token = consume_next_token
-      @token_list << token
-      end_of_file_met = token.is? :eof
+    while @token_list.size < @token_number + number_of_tokens
+      consume_next_token
     end
-    @token_list[-1]
+    @token_list[@token_number + number_of_tokens - 1]
   end
 
   def token_is?(token_type)
@@ -104,11 +102,17 @@ module Scanner
   end
 
   def each
-    token = consume
-    while token.is_not? :eof
-      yield token
-      token = consume
-    end
+    local_index = 0
+    begin
+      if local_index >= @token_list.size
+        consume_next_token
+      end
+      current_token = @token_list[local_index]
+      if current_token.is_not? :eof
+        yield current_token
+      end
+      local_index += 1
+    end while current_token.is_not? :eof
   end
 
   private
@@ -124,7 +128,8 @@ module Scanner
         if check_for_token_separator[symbol]
           check_for_separator
         end
-        return Token.new(token_type, content, @line_number, currently_at_column)
+        @token_list << Token.new(token_type, content, @line_number, currently_at_column)
+        return
       end
     end
 
