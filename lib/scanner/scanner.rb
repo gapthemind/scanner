@@ -10,6 +10,7 @@ module Scanner
       @check_for_token_separator = {}
       @separator = nil
 
+      # defines a token of the language
       def token(token_symbol, regular_expression, options = {})
         modified_reg_exp = "\\A#{regular_expression}"
         @language_tokens[token_symbol] = /#{modified_reg_exp}/
@@ -60,6 +61,7 @@ module Scanner
 
   include Enumerable
 
+  # Sets the string to parse
   def parse(program)
     @program = program
     @token_list = []
