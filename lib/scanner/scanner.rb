@@ -15,16 +15,16 @@ module Scanner
       # Each token is defined by a symbol, used to identify the token, and a
       # regular expression that the token should match. An optional third
       # parameter accepts a hash of options. For example:
-      # 
+      #
       #     token :number, '\d+'
-      # 
+      #
       # will match strings containing digits.
-      # 
+      #
       # Some care is needed when defining tokens that collide with other
       # tokens. For instance, a languange may define the token '==' and the
       # token '='. You need to define the double equals before the single
       # equals, otherwise the string '==' will be identified as two '=' tokens,
-      # instead of a '==' token. 
+      # instead of a '==' token.
       def token(token_symbol, regular_expression, options = {})
         modified_reg_exp = "\\A#{regular_expression}"
         @language_tokens[token_symbol] = /#{modified_reg_exp}/
