@@ -1,4 +1,5 @@
 # Scanner
+[![Code Climate](https://codeclimate.com/github/gapthemind/scanner.png)](https://codeclimate.com/github/gapthemind/scanner) 
 
 Scanner is a gem to scan strings for regular expressions, and return
 them as tokes, Each token will be identified by a symbol, and contain
